@@ -61,7 +61,7 @@ int main(int argc, char** argv) {
         return -1;
     }
     glfwMakeContextCurrent(window);
-    #if defined(__WIN64) || defined(__WIN32)
+    #if (defined(__WIN64) || defined(__WIN32)) && defined(_DEBUG)
     FreeConsole();
     #endif
 
@@ -96,7 +96,17 @@ int main(int argc, char** argv) {
     glEnableVertexAttribArray(tex_attrib);
 
     int w, h;
-    uint32_t texture = get_image(filename, &w, &h);
+    int32_t texture = get_image(filename, &w, &h);
+    if (texture == -1) {
+        w = 1;
+        h = 1;
+        uint8_t r = 100;
+        uint8_t g = 0;
+        uint8_t b = 100;
+        uint8_t a = 255;
+        texture = get_color_image(w, h, 100, 0, 100, 255);
+        printf("Loaded default color #%02x%02x%02x%02x\n", r, g, b, a);
+    }
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture);
